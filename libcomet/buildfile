@@ -1,0 +1,36 @@
+intf_libs = # Interface dependencies.
+impl_libs = # Implementation dependencies.
+#import xxxx_libs += libhello%lib{hello}
+
+lib{comet}: {hxx ixx txx cxx}{** -comet/version} hxx{comet/version} $impl_libs $intf_libs
+
+hxx{version}: in{version} $src_root/manifest
+
+hxx{export}@./: cxx.importable = false
+
+cxx.poptions =+ -target cheerp-genericjs
+cxx.poptions =+ -D__CHEERP_CLIENT__
+cxx.poptions =+ "-I$out_root" "-I$src_root"
+
+{hbmia obja}{*}: cxx.poptions += -DLIBCOMET_STATIC_BUILD
+{hbmis objs}{*}: cxx.poptions += -DLIBCOMET_SHARED_BUILD
+
+lib{comet}:
+{
+  cxx.export.poptions = -target cheerp-genericjs -D__CHEERP_CLIENT__ "-I$out_root" "-I$src_root"
+  cxx.export.libs = $intf_libs
+}
+
+liba{comet}: cxx.export.poptions += -DLIBCOMET_STATIC
+libs{comet}: cxx.export.poptions += -DLIBCOMET_SHARED
+
+if $version.pre_release
+  lib{comet}: bin.lib.version = "-$version.project_id"
+else
+  lib{comet}: bin.lib.version = "-$version.major.$version.minor"
+
+{hxx ixx txx}{*}:
+{
+  install         = include/
+  install.subdirs = true
+}

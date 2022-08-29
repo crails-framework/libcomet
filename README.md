@@ -1,0 +1,3 @@
+# libcomet
+
+C++ library

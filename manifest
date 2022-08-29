@@ -1,0 +1,11 @@
+: 1
+name: libcomet
+version: 2.0.0
+summary: comet C++ web frontend library, designed for Cheerp's C++ to JavaScript transpiler
+license: BSD-3-Clause
+description-file: README.md
+url: https://github.com/crails-framework/libcomet.git
+email: michael@unetresgrossebite.com
+#build-error-email: michael@unetresgrossebite.com
+depends: * build2 >= 0.15.0
+depends: * bpkg >= 0.15.0

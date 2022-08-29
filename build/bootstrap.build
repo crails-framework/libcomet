@@ -1,0 +1,7 @@
+project = libcomet
+
+using version
+using config
+using test
+using install
+using dist

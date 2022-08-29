@@ -1,0 +1,6 @@
+$out_root/
+{
+  include libcomet/
+}
+
+export $out_root/libcomet/$import.target
