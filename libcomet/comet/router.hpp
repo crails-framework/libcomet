@@ -1,7 +1,7 @@
 #ifndef  CRAILS_FRONT_ROUTER_HPP
 # define CRAILS_FRONT_ROUTER_HPP
 
-# include "router_base.hpp"
+# include <crails/router_base.hpp>
 # include "signal.hpp"
 # include <cheerp/client.h>
 # include <map>
@@ -10,7 +10,7 @@ namespace Comet
 {
   typedef std::map<std::string, std::string> Params;
 
-  class Router : public RouterBase<Params, std::function<void (const Params&)> >
+  class Router : public Crails::RouterBase<Params, std::function<void (const Params&)> >
   {
   public:
     Router();

@@ -1,6 +1,4 @@
-intf_libs = # Interface dependencies.
-impl_libs = # Implementation dependencies.
-#import xxxx_libs += libhello%lib{hello}
+import intf_libs += libcrails-router%lib{crails-router}
 
 lib{comet}: {hxx ixx txx cxx}{** -comet/version} hxx{comet/version} $impl_libs $intf_libs
 
@@ -17,7 +15,7 @@ cxx.poptions =+ "-I$out_root" "-I$src_root"
 
 lib{comet}:
 {
-  cxx.export.poptions = -target cheerp-genericjs -D__CHEERP_CLIENT__ "-I$out_root" "-I$src_root"
+  cxx.export.poptions = -target cheerp-genericjs -D__CHEERP_CLIENT__ "-I$out_root/libcomet/" "-I$src_root/libcomet/"
   cxx.export.libs = $intf_libs
 }
 
