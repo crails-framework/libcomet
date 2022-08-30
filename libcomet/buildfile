@@ -1,4 +1,8 @@
-import intf_libs += libcrails-router%lib{crails-router}
+# Technically, we should import libcrails-router's interface, but it seems
+# Cheerp doesn't support that. The libraries don't actually need to be linked,
+# so the best solution around this is to install dependencies one by one, and
+# ensure their installed include path is visible to this package when it builds.
+#import intf_libs += libcrails-router%lib{crails-router}
 
 lib{comet}: {hxx ixx txx cxx}{** -comet/version} hxx{comet/version} $impl_libs $intf_libs
 
