@@ -29,6 +29,26 @@ namespace Comet
 
     std::string last_hash;
   };
+
+  template<typename CONTROLLER>
+  class ActionRoute
+  {
+    typedef void (CONTROLLER::*Method)();
+  public:
+    static void trigger(const Params& params, Method method)
+    {
+      auto controller = std::make_shared<CONTROLLER>(params);
+
+      controller->initialize().then([controller, method]()
+      {
+        (controller.get()->*method)();
+        controller->finalize();
+      });
+    }
+  };
 }
+
+# define match_action(path, controller, action) \
+  match("", path, [](const Comet::Params& params) { ActionRoute<controller>::trigger(params, &controller::action); })
 
 #endif

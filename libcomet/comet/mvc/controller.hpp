@@ -5,27 +5,21 @@
 # include "../http.hpp"
 # include "../router.hpp"
 # include "layout.hpp"
-
-# define match_route(ROUTE, CONTROLLER, METHOD) \
-  match(ROUTE, [](const Params& p) \
-  { \
-    auto* controller = new CONTROLLER(p); \
-    controller->initialize().then([controller]() \
-    { \
-      controller->METHOD(); \
-      controller->finalize().then([controller]() { delete controller; }); \
-    }); \
-  });
+# include <memory>
 
 namespace Comet
 {
-  class Controller
+  class Controller : public std::enable_shared_from_this<Controller>
   {
   protected:
     const Params& params;
 
   public:
     Controller(const Params& p) : params(p)
+    {
+    }
+
+    virtual ~Controller()
     {
     }
 
