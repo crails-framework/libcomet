@@ -140,6 +140,11 @@ namespace Comet
         models_json = payload.as_data();
       else
         models_json = payload[resource_name];
+      from_data(models_json);
+    }
+
+    virtual void from_data(Data models_json)
+    {
       models_json.each([this](Data model_json) -> bool
       {
         auto ptr = std::make_shared<MODEL>();
