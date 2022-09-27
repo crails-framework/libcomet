@@ -40,10 +40,10 @@ namespace Comet
   public:
     virtual void from_json(Data) = 0;
     virtual std::string to_json() const = 0;
-    void parse(const std::string& str);
+    void parse(const std::string& str) override;
   protected:
-    std::string get_payload();
-    std::string get_content_type() const;
+    std::string get_payload() override;
+    std::string get_content_type() const override;
   };
 }
 

@@ -3,6 +3,7 @@
 
 # include "anchorable_element.hpp"
 # include "bindable.hpp"
+# include <type_traits>
 
 namespace Comet
 {
@@ -41,12 +42,17 @@ namespace Comet
     template<typename ELEMENT>
     void set_element(std::shared_ptr<ELEMENT> pointer)
     {
-      cleanup();
-      element = std::dynamic_pointer_cast<IBindableView>(pointer);
-      element_ptr = element.get();
-      if (is_anchorable() && has_element())
-        attach();
+      if (!std::is_base_of<IBindableView, ELEMENT>())
+        throw std::logic_error("SlotElement::set_element called with a type not deriving from IBindableView.");
+      if (pointer)
+      {
+        set_element(*static_cast<IBindableView*>(pointer.get()));
+        element = std::static_pointer_cast<IBindableView>(pointer);
+      }
+      else
+        cleanup();
     }
+
   private:
     void cleanup()
     {

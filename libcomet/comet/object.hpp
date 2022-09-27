@@ -165,7 +165,7 @@ namespace Comet
     }
 
     bool is_undefined() const;
-    
+
     static void set_global(const std::string&, Comet::Object);
 
   private:

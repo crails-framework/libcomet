@@ -4,6 +4,7 @@
 # include <cheerp/client.h>
 # include <cheerp/clientlib.h>
 # include <map>
+# include <list>
 # include "object.hpp"
 # include "events.hpp"
 # include "append_semantics.hpp"
@@ -46,7 +47,7 @@ namespace Comet
     std::string tagName() const { return Comet::Object((*this)->get_tagName()); }
 
     template<typename T>
-    T value()
+    T value() const
     {
       T var;
       std::stringstream stream;
@@ -56,7 +57,13 @@ namespace Comet
     }
 
     template<>
-    std::wstring value<std::wstring>()
+    std::string value<std::string>() const
+    {
+      return get_value();
+    }
+
+    template<>
+    std::wstring value<std::wstring>() const
     {
       auto* input_el = static_cast<client::HTMLInputElement*>(**this);
       auto* client_string = input_el->get_value();
@@ -90,7 +97,7 @@ namespace Comet
     Element get_parent();
     Element get_next();
 
-    std::vector<Element> find(const std::string& selector);
+    std::list<Element>   find(const std::string& selector);
     Element              find_one(const std::string& selector);
     bool                 contains(const client::HTMLElement*);
     void                 each(std::function<bool (Element&)>);

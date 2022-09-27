@@ -11,11 +11,9 @@ namespace Comet
   {
     Element get_container(const std::string& application_name)
     {
-      auto candidates = body.find("[comet-app='" + application_name + "']");
+      auto container = body.find_one("[comet-app='" + application_name + "']");
 
-      if (candidates.size() > 0)
-        return candidates[0];
-      return body;
+      return container.is_undefined() ? body : container;
     }
 
   public:

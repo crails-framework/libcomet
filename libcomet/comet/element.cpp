@@ -188,7 +188,7 @@ map<string, string> Element::css() const
 
 void Element::append_to(client::HTMLElement* el)
 {
-  el->appendChild(**this);
+  el->appendChild(static_cast<client::HTMLElement*>(ptr));
 }
 
 void Element::append_to(Element& el)
@@ -222,7 +222,10 @@ void Element::insert_after(client::HTMLElement* el)
     if (nextSibling)
       insert_before(static_cast<client::HTMLElement*>(nextSibling));
     else if (wrapper.has_parent())
-      append_to(*(wrapper.get_parent()));
+    {
+      auto parent = wrapper.get_parent();
+      append_to(parent);
+    }
   }
 }
 
@@ -245,14 +248,13 @@ bool Element::contains(const client::HTMLElement* source)
   return result;
 }
 
-std::vector<Element> Element::find(const std::string& selector)
+std::list<Element> Element::find(const std::string& selector)
 {
   client::NodeList* node_list = (*this)->querySelectorAll(selector.c_str());
-  std::vector<Element> results;
+  std::list<Element> results;
 
-  results.resize(node_list->get_length());
   for (double i = 0 ; i < node_list->get_length() ; ++i)
-    results[i] = Element(static_cast<client::HTMLElement*>(node_list->item(i)));
+    results.push_back(Element(static_cast<client::HTMLElement*>(node_list->item(i))));
   return results;
 }
 
