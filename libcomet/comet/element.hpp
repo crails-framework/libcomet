@@ -75,10 +75,10 @@ namespace Comet
     inline Element& inner(const std::vector<Element*>& els)                 { return operator>(els); }
     inline Element& inner(const std::vector<std::shared_ptr<Element> > els) { return operator>(els); }
 
-    template<typename LIST>
-    Element& operator>(const LIST& list)
+    template<typename TYPE>
+    Element& operator>(const TYPE& list)
     {
-      ElementListAppender<LIST, is_array_container<LIST>::value>::append_list(list, **this);
+      ElementListAppender<TYPE, is_array_container<TYPE>::value>::append_list(list, **this);
       return *this;
     }
 
@@ -139,6 +139,8 @@ namespace Comet
       static_cast<client::HTMLInputElement*>(**this)->set_value(val.c_str());
     }
   };
+
+  typedef std::vector<Element> Elements;
 }
 
 #endif

@@ -46,7 +46,7 @@ namespace Comet
         prepend_to_anchor(elements);
         break ;
       case AnchorsEnd:
-        raise(std::logic_error("AnchorableElement::attach_element called with unset anchor"));
+        throw std::logic_error("AnchorableElement::attach_element called with unset anchor");
         break ;
       }
     }

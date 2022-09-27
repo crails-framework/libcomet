@@ -24,9 +24,9 @@ bool Object::is_of_type(const char* type) const
 
 bool Object::is_undefined() const
 {
-  prepare_is_undefined();
   if (ptr != nullptr)
   {
+    prepare_is_undefined();
     Object      answer = window.apply("isUndefined", *this);
     std::string result = (std::string)(*static_cast<client::String*>(answer.ptr));
     return result == "y";
