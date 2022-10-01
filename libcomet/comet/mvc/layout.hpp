@@ -22,7 +22,7 @@ namespace Comet
       auto container = get_container(application_name);
 
       if (container.is_undefined())
-        raise(std::runtime_error("Could not find the application container element"));
+        throw std::runtime_error("Could not find the application container element");
       container.empty();
       ELEMENT::append_to(container);
       ELEMENT::bind_attributes();

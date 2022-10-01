@@ -1,6 +1,7 @@
 #ifndef  COMET_EVENTS_HPP
 # define COMET_EVENTS_HPP
 
+# include <cheerp/client.h>
 # include <cheerp/clientlib.h>
 # include <map>
 
