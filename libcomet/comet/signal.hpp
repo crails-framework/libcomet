@@ -68,7 +68,9 @@ namespace Comet
 
     void trigger(Args... args)
     {
-      for (auto slot : callbacks)
+      std::map<unsigned long, Callback> to_call = callbacks;
+
+      for (auto slot : to_call)
         slot.second(args...);
     }
 
@@ -117,7 +119,9 @@ namespace Comet
 
     void trigger()
     {
-      for (auto slot : callbacks)
+      std::map<unsigned long, Callback> to_call = callbacks;
+
+      for (auto slot : to_call)
         slot.second();
     }
 
