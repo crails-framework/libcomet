@@ -30,11 +30,21 @@ namespace Comet
     }
 
     template<typename VIEW_ELEMENT>
-    void render(std::shared_ptr<VIEW_ELEMENT> el)
+    std::shared_ptr<VIEW_ELEMENT> render(std::shared_ptr<VIEW_ELEMENT> el)
     {
       ELEMENT::slot_content.set_element(el);
       ELEMENT::bind_attributes();
       ELEMENT::trigger_binding_updates();
+      return el;
+    }
+
+    template<typename VIEW_ELEMENT, typename... ARGS>
+    std::shared_ptr<VIEW_ELEMENT> render(ARGS... args)
+    {
+      auto view = std::make_shared<VIEW_ELEMENT>(args...);
+
+      render(view);
+      return view;
     }
   };
 }
