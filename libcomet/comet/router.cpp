@@ -42,6 +42,7 @@ bool Router::navigate(const string& path, bool trigger)
 
     if (action)
     {
+      on_before_route_execution.trigger(path);
       (*action)(params);
       on_route_executed.trigger(path);
       return true;
