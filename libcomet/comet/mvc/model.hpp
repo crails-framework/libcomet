@@ -22,6 +22,7 @@ namespace Comet
     Signal<void> removed;
     Signal<void> synced;
 
+    void                set_id(id_type value) { id = value; }
     virtual id_type     get_id() const { return id; }
     virtual std::string get_url() const = 0;
     virtual std::string get_resource_name() const { return ""; }
@@ -30,6 +31,11 @@ namespace Comet
     {
       auto request = Http::Request::get(get_url());
 
+      return fetch(request);
+    }
+
+    Promise fetch(Http::Request::Ptr request)
+    {
       request->set_headers({{"Accept", get_content_type()}});
       return request->send().then([this, request]()
       {

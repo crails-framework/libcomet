@@ -30,39 +30,37 @@ namespace Comet
     {
       typedef std::vector<std::shared_ptr<MODEL>> list_type;
       typedef typename list_type::value_type value_type;
+      typedef typename list_type::const_iterator const_iterator;
+      typedef typename list_type::const_reverse_iterator const_reverse_iterator;
 
       Subset() {}
 
-      Subset(Collection<MODEL>& source_) : source(&source_)
+      Subset(Collection<MODEL>& source_)
       {
-        source->synced.connect([this]() { dirty = true; });
+        set_source(&source_);
       }
 
       Subset(const Subset& subset) :
-        source(subset.source), selector(subset.selector), sort_(subset.sort_),
-        index_(subset.index_), limit_(subset.limit_), content(subset.content),
-        dirty(subset.dirty)
+        selector(subset.selector), sort_(subset.sort_), index_(subset.index_),
+        limit_(subset.limit_), content(subset.content), dirty(subset.dirty)
       {
-        source->synced.connect([this]() { dirty = true; });
+        set_source(subset.source);
       }
 
       Subset& operator=(const Subset& subset)
       {
-        if (source)
-          stop_listening(source->synced);
-        source = subset.source; selector = subset.selector; sort_ = subset.sort_;
-        index_ = subset.index_;, limit_ = subset.limit_; content = subset.content;
-        dirty = subset.dirty;
-        source->synced.connect([this]() { dirty = true; });
+        selector = subset.selector; sort_ = subset.sort_; index_ = subset.index_;
+        limit_ = subset.limit_; content = subset.content; dirty = subset.dirty;
+        set_source(subset.source);
         return *this;
       }
 
-      typename list_type::iterator begin() { return begin_iterator<list_type::iterator>(&list_type::begin); }
-      typename list_type::iterator end() { return end_iterator<list_type::iterator>(&list_type::begin, &list_type::end); }
-      typename list_type::reverse_iterator rbegin() { return begin_iterator<list_type::reverse_iterator>(&list_type::rbegin()); }
-      typename list_type::reverse_iterator rend() { return end_iterator<list_type::reverse_iterator>(&list_type::rbegin, &list_type::rend); }
-      unsigned long size() { if (dirty) { run_query(); } return content.size(); }
-      const Collection<MODEL>& collection() const { return collection; }
+      const_iterator begin() const { return begin_iterator<const_iterator>(&list_type::begin); }
+      const_iterator end() const { return end_iterator<const_iterator>(&list_type::begin, &list_type::end); }
+      const_reverse_iterator rbegin() const { return begin_iterator<const_reverse_iterator>(&list_type::rbegin()); }
+      const_reverse_iterator rend() const { return end_iterator<const_reverse_iterator>(&list_type::rbegin, &list_type::rend); }
+      std::size_t size() const { if (dirty) { run_query(); } return content.size(); }
+      Collection<MODEL>& collection() { return *source; }
 
       Subset& where(std::function<bool (const MODEL&)> callback)
       {
@@ -91,15 +89,30 @@ namespace Comet
       }
 
     private:
-      template<typename ITERATOR, typename METHOD>
-      ITERATOR begin_iterator(METHOD begin)
+      void set_source(Collection<MODEL>* source_)
+      {
+        std::function<void(const MODEL&)> set_dirty([this](const MODEL&){dirty = true;});
+        if (source)
+        {
+          stop_listening(source->synced);
+          stop_listening(source->added);
+          stop_listening(source->removed);
+        }
+        source = source_;
+        listen_to(source->synced, [this]() { dirty = true; });
+        listen_to(source->added, set_dirty);
+        listen_to(source->removed, set_dirty);
+      }
+
+      template<typename ITERATOR>
+      ITERATOR begin_iterator(ITERATOR (list_type::*begin)() const) const
       {
         if (dirty) run_query();
         return (content.*begin)();
       }
 
-      template<typename ITERATOR, typename METHOD>
-      ITERATOR end_iterator(METHOD begin, METHOD end)
+      template<typename ITERATOR>
+      ITERATOR end_iterator(ITERATOR (list_type::*begin)() const, ITERATOR (list_type::*end)() const) const
       {
         if (dirty) run_query();
         if (limit_)
@@ -111,25 +124,26 @@ namespace Comet
         return (content.*end)();
       }
 
-      void run_query()
+      void run_query() const
       {
         if (source)
         {
           auto selection = source->where(selector);
+          content.clear();
           content.reserve(selection.size());
-          std::copy(std::make_move_iterator(selection.begin()), std::make_move_iterator(selection.end()));
+          std::copy(std::make_move_iterator(selection.begin()), std::make_move_iterator(selection.end()), std::back_inserter(content));
           if (sort_)
-            std::sort(selection.begin(), selection.end(), sort_);
+            std::sort(content.begin(), content.end(), [this](const ModelPtr& a, const ModelPtr& b) { return sort_(*a, *b); });
           dirty = false;
         }
       }
 
       Collection<MODEL>* source = nullptr;
-      std::function<bool (const MODEL&)> selector = []() { return true; };
+      std::function<bool (const MODEL&)> selector = [](const MODEL&) { return true; };
       std::function<bool (const MODEL&, const MODEL&)> sort_;
       unsigned long index_ = 0, limit_ = 0;
-      list_type content;
-      bool dirty = true;
+      mutable list_type content;
+      mutable bool dirty = true;
     };
 
     Subset subset()
@@ -139,7 +153,7 @@ namespace Comet
 
     void add(ModelPtr model)
     {
-      auto it = models.at(model->get_id());
+      auto it = models.find(model->get_id());
 
       if (it == models.end())
       {
@@ -150,7 +164,7 @@ namespace Comet
 
     void remove(ModelPtr model)
     {
-      auto it = models.at(model->get_id());
+      auto it = models.find(model->get_id());
 
       if (it != models.end())
       {
@@ -165,6 +179,12 @@ namespace Comet
         callback(item.second);
     }
 
+    void each(std::function<void (MODEL&)> callback)
+    {
+      for (auto item : models)
+        callback(*item.second);
+    }
+
     std::list<ModelPtr> where(std::function<bool (ModelPtr)> selector) const
     {
       std::list<ModelPtr> results;
@@ -172,6 +192,18 @@ namespace Comet
       for (auto item : models)
       {
         if (selector(item.second))
+          results.push_back(item.second);
+      }
+      return results;
+    }
+
+    std::list<ModelPtr> where(std::function<bool (MODEL&)> selector) const
+    {
+      std::list<ModelPtr> results;
+
+      for (auto item : models)
+      {
+        if (selector(*item.second))
           results.push_back(item.second);
       }
       return results;
@@ -199,12 +231,17 @@ namespace Comet
     Promise fetch()
     {
       auto request = Http::Request::get(get_url());
-        
+
+      return fetch(request);
+    }
+
+    Promise fetch(Comet::Http::Request::Ptr request)
+    {
       request->set_headers({{"Accept", get_mimetype()}});
       return request->send().then([this, request]()
       {
         auto response = request->get_response();
-          
+
         if (response->ok())
         {
           if (response->has_body())
@@ -214,7 +251,7 @@ namespace Comet
       });
     }
 
-    unsigned int count() const
+    std::size_t count() const
     {
       return models.size();
     }
