@@ -42,6 +42,7 @@ namespace Comet
     template<typename T>
     Element& value(const T val) { std::stringstream stream; stream << val; _value<std::string>(stream.str()); return *this; }
     Element& checked(bool val)                  { static_cast<client::HTMLInputElement*>(**this)->set_checked(val); return *this; }
+    Element& selected(bool val)                 { static_cast<client::HTMLOptionElement*>(**this)->set_selected(val); return *this; }
 
     std::string html()    const { return Comet::Object((*this)->get_innerHTML()); }
     std::string tagName() const { return Comet::Object((*this)->get_tagName()); }
@@ -119,6 +120,7 @@ namespace Comet
     std::string          get_text() const;
     std::string          get_value() const;
     bool                 get_checked() const { return static_cast<client::HTMLInputElement*>(**this)->get_checked(); }
+    bool                 get_selected() const { return static_cast<client::HTMLOptionElement*>(**this)->get_selected(); }
 
   private:
     template<typename TYPE>

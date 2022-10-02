@@ -23,7 +23,7 @@ namespace Comet
 
       controller->initialize().then([controller, method]()
       {
-        (controller.get()->*method)();
+        (controller->*method)();
         controller->finalize();
       });
       listener->listen_to(router.on_before_route_execution, [controller, listener](const std::string&)
