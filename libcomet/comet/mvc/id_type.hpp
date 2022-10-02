@@ -1,9 +1,19 @@
 #ifndef  COMET_MVC_ID_TYPE_HPP
 # define COMET_MVC_ID_TYPE_HPP
 
-# ifndef COMET_MVC_ID_TYPE
-#  define COMET_MVC_ID_TYPE unsigned long
-#  define COMET_MVC_NULL_ID 0
-# endif
+namespace Comet
+{
+  struct LongIdTrait
+  {
+    typedef unsigned long type;
+    constexpr static unsigned long null_id = 0;
+  };
+
+  struct StringIdTrait
+  {
+    typedef std::string type;
+    constexpr static const char* null_id = "";
+  };
+}
 
 #endif

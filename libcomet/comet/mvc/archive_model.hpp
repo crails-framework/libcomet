@@ -7,7 +7,8 @@
 
 namespace Comet
 {
-  class ArchiveModel : public Model
+  template<typename ID_TRAIT = LongIdTrait>
+  class ArchiveModel : public Model<ID_TRAIT>
   {
   public:
     virtual void serialize(OArchive&) = 0;

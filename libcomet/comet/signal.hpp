@@ -29,6 +29,8 @@ namespace Comet
       connections.push_back(std::pair<ISignal*,unsigned long>(&signal, id));
     }
 
+    void stop_listening(ISignal& signal) { stop_listening(&signal); }
+
     void stop_listening(ISignal* ptr = 0)
     {
       for (auto it = connections.begin() ; it != connections.end() ;)
