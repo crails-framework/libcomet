@@ -31,16 +31,19 @@ namespace Comet
     Object() { ptr = new client::Object; }
     Object(client::Object* ptr) : ptr(ptr) {}
     Object(client::String* ptr) : ptr((client::Object*)ptr) {}
-    Object(const char* str)         { ptr = new client::String(str); }
-    Object(const wchar_t* str)      { ptr = new client::String(str); }
-    Object(const std::string& str)  { ptr = new client::String(str.c_str()); }
-    Object(const std::wstring& str) { ptr = new client::String(str.c_str()); }
-    Object(unsigned long number)    { ptr = new client::String(number); }
-    Object(unsigned int number)     { ptr = new client::String(number); }
-    Object(long number)             { ptr = new client::String(number); }
-    Object(int number)              { ptr = new client::String(number); }
-    Object(double number)           { ptr = new client::String(number); }
-    Object(bool boolean)            { ptr = new client::String((int)boolean); }
+    Object(const char* str)           { ptr = new client::String(str); }
+    Object(const wchar_t* str)        { ptr = new client::String(str); }
+    Object(const std::string& str)    { ptr = new client::String(str.c_str()); }
+    Object(const std::wstring& str)   { ptr = new client::String(str.c_str()); }
+    Object(unsigned long number)      { ptr = new client::String(number); }
+    Object(unsigned int number)       { ptr = new client::String(number); }
+    Object(long number)               { ptr = new client::String(number); }
+    Object(int number)                { ptr = new client::String(number); }
+    Object(double number)             { ptr = new client::String(number); }
+    Object(long long number)          { ptr = new client::String(static_cast<long>(number)); }
+    Object(unsigned long long number) { ptr = new client::String(static_cast<unsigned long>(number)); }
+    Object(long double number)        { ptr = new client::String(static_cast<double>(number)); }
+    Object(bool boolean)              { ptr = new client::String((int)boolean); }
     Object(const std::map<std::string, Object>& items) { ptr = new client::Object; set(items); }
 
     Object(const std::vector<Object>& items)
