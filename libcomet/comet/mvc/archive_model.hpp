@@ -1,6 +1,7 @@
 #ifndef  COMET_MVC_ARCHIVE_MODEL_HPP
 # define COMET_MVC_ARCHIVE_MODEL_HPP
 
+# include <iostream>
 # include <crails/archive.hpp>
 # include "model.hpp"
 # include "helpers.hpp"
@@ -19,7 +20,16 @@ namespace Comet
       IArchive archive;
 
       archive.set_data(str);
-      serialize(archive);
+      try
+      {
+        serialize(archive);
+      }
+      catch (const ArchiveException& error)
+      {
+        std::cerr << "Failed to parse `" << Model<ID_TRAIT>::get_url() << "`: "
+		  << error.what() << std::endl << error.dump << std::endl;
+        throw;
+      }
     }
 
   protected:

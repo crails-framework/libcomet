@@ -3,6 +3,7 @@
 
 # include "collection.hpp"
 # include <libtext-archive/archive.hpp>
+# include <iostream>
 
 namespace Comet
 {
@@ -22,12 +23,21 @@ namespace Comet
       unsigned long size;
 
       archive.set_data(str);
-      archive & size;
-      for (unsigned long i = 0 ; i < size ; ++i)
+      try
       {
-        auto ptr = std::make_shared<MODEL>();
-        ptr->serialize(archive);
-        Collection<MODEL>::models.emplace(ptr->get_id(), ptr);
+        archive & size;
+        for (unsigned long i = 0 ; i < size ; ++i)
+        {
+          auto ptr = std::make_shared<MODEL>();
+          ptr->serialize(archive);
+          Collection<MODEL>::models.emplace(ptr->get_id(), ptr);
+        }
+      }
+      catch (const ArchiveException& error)
+      {
+        std::cerr << "Failed to parse `Collection`: "
+                  << error.what() << std::endl << error.dump << std::endl;
+        throw;
       }
     }
   };
