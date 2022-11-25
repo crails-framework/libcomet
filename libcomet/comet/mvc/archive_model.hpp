@@ -22,12 +22,12 @@ namespace Comet
       archive.set_data(str);
       try
       {
-        serialize(archive);
+        archive & *this;
       }
       catch (const ArchiveException& error)
       {
         std::cerr << "Failed to parse `" << Model<ID_TRAIT>::get_url() << "`: "
-		  << error.what() << std::endl << error.dump << std::endl;
+          << error.what() << std::endl << error.dump << std::endl;
         throw;
       }
     }
@@ -37,7 +37,7 @@ namespace Comet
     {
       OArchive archive;
 
-      serialize(archive);
+      archive & *this;
       return archive.as_string();
     }
 

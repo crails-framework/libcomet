@@ -19,19 +19,15 @@ namespace Comet
   protected:
     virtual void parse(const std::string& str)
     {
-      IArchive      archive;
-      unsigned long size;
+      IArchive         archive;
+      std::list<MODEL> list;
 
-      archive.set_data(str);
       try
       {
-        archive & size;
-        for (unsigned long i = 0 ; i < size ; ++i)
-        {
-          auto ptr = std::make_shared<MODEL>();
-          ptr->serialize(archive);
-          Collection<MODEL>::models.emplace(ptr->get_id(), ptr);
-        }
+        archive.set_data(str);
+        archive & list;
+        for (auto it = list.begin() ; it != list.end() ; ++it)
+          Collection<MODEL>::models.emplace(it->get_id(), std::make_shared<MODEL>(*it));
       }
       catch (const ArchiveException& error)
       {
