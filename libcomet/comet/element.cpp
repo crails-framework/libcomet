@@ -265,11 +265,15 @@ Element Element::find_one(const std::string& selector)
 
 void Element::each(std::function<bool (Element&)> func)
 {
-  auto* node_list = (*this)->get_childNodes();
+  auto* source = (*this)->get_childNodes();
+  vector<client::Node*> list;
 
-  for (double i = 0 ; i < node_list->get_length() ; ++i)
+  list.reserve(source->get_length());
+  for (double i = 0 ; i < source->get_length() ; ++i)
+    list.push_back(source->item(i));
+  for (client::Node* node : list)
   {
-    Element child(static_cast<client::HTMLElement*>(node_list->item(i)));
+    Element child(static_cast<client::HTMLElement*>(node));
 
     if (func(child) == false)
       break ;
