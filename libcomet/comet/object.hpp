@@ -7,6 +7,7 @@
 # include <vector>
 # include <string>
 # include <sstream>
+# include <functional>
 
 #define js_object(...) \
   Comet::Object(std::map<std::string, Comet::Object>({__VA_ARGS__}))
