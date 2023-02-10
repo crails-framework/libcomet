@@ -254,7 +254,12 @@ std::list<Element> Element::find(const std::string& selector)
   std::list<Element> results;
 
   for (double i = 0 ; i < node_list->get_length() ; ++i)
-    results.push_back(Element(static_cast<client::HTMLElement*>(node_list->item(i))));
+  {
+    client::Node* node = node_list->item(i);
+
+    if (node->get_nodeType() == 1)
+      results.push_back(Element(static_cast<client::HTMLElement*>(node)));
+  }
   return results;
 }
 
@@ -270,7 +275,10 @@ void Element::each(std::function<bool (Element&)> func)
 
   list.reserve(source->get_length());
   for (double i = 0 ; i < source->get_length() ; ++i)
-    list.push_back(source->item(i));
+  {
+    if (source->item(i)->get_nodeType() == 1)
+      list.push_back(source->item(i));
+  }
   for (client::Node* node : list)
   {
     Element child(static_cast<client::HTMLElement*>(node));
