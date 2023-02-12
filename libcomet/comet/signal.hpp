@@ -84,7 +84,7 @@ namespace Comet
       return listener_i - 1;
     }
 
-    void disconnect(unsigned long i)
+    void disconnect(unsigned long i) override
     {
       for (auto it = callbacks.begin() ; it != callbacks.end() ; ++it)
       {
@@ -135,7 +135,7 @@ namespace Comet
       return listener_i - 1;
     }
 
-    void disconnect(unsigned long i)
+    void disconnect(unsigned long i) override
     {
       for (auto it = callbacks.begin() ; it != callbacks.end() ; ++it)
       {
