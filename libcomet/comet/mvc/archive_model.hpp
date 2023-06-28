@@ -9,12 +9,9 @@
 namespace Comet
 {
   template<typename ID_TRAIT = LongIdTrait>
-  class ArchiveModel : public Model<ID_TRAIT>
+  class ArchiveModel : public Model<ID_TRAIT>, public Archivable
   {
   public:
-    virtual void serialize(OArchive&) = 0;
-    virtual void serialize(IArchive&) = 0;
-
     void parse(const std::string& str) override
     {
       IArchive archive;
