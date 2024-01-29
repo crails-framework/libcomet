@@ -5,6 +5,16 @@
 
 using namespace std;
 
+DataTree& DataTree::from_map(const std::map<std::string, std::string>& vars)
+{
+  for (auto it = vars.begin() ; it != vars.end() ; ++it)
+  {
+    Data data = Data(tree, it->first);
+    data = it->second;
+  }
+  return *this;
+}
+
 DataTree& DataTree::from_json(stringstream& stream)
 {
   return from_json(stream.str());
@@ -189,7 +199,6 @@ string Data::as<string>() const
 {
   return as_object().apply("toString");
 }
-
 
 template<>
 wstring Data::as<wstring>() const

@@ -3,6 +3,7 @@
 
 # include <functional>
 # include <vector>
+# include <map>
 # include <string>
 # include <iostream>
 # include <sstream>
@@ -218,6 +219,8 @@ public:
   Data       operator[](const std::string& key)       { return Data(tree, key.c_str()); }
   const Data operator[](const std::string& key) const { return Data(tree, key.c_str()); }
   void       clear()                                  { tree = Comet::Object(); }
+
+  DataTree& from_map(const std::map<std::string, std::string>&);
 
   DataTree& from_json(std::stringstream& stream);
   DataTree& from_json(const std::string& str);
