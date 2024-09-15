@@ -10,7 +10,7 @@ namespace Comet
   class JsonCollection : public Collection<MODEL>
   {
   public:
-    virtual std::string get_mimetype() const
+    virtual std::string get_mimetype() const override
     {
       return "application/json";
     }

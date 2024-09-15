@@ -94,12 +94,12 @@ bool Element::has_parent() const
   return (*this)->get_parentElement() != 0;
 }
 
-Element Element::get_parent()
+Element Element::get_parent() const
 {
   return Element((*this)->get_parentElement());
 }
 
-Element Element::get_next()
+Element Element::get_next() const
 {
   return Element((client::HTMLElement*)((*this)->get_nextElementSibling()));
 }

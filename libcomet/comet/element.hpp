@@ -95,8 +95,8 @@ namespace Comet
 
     bool    is_attached() const;
     bool    has_parent() const;
-    Element get_parent();
-    Element get_next();
+    Element get_parent() const;
+    Element get_next() const;
 
     std::list<Element>   find(const std::string& selector);
     Element              find_one(const std::string& selector);
