@@ -184,7 +184,8 @@ public:
   void each(std::function<bool (const Data)> functor) const;
 
   void output(std::ostream& out = std::cout) const;
-  std::string to_json() const;
+  template<typename RETURN_TYPE = std::string>
+  RETURN_TYPE to_json() const { return as_object().to_json<RETURN_TYPE>(); }
   std::string to_xml() const;
 
   void merge(Data data);
@@ -225,7 +226,8 @@ public:
   DataTree& from_json(std::stringstream& stream);
   DataTree& from_json(const std::string& str);
   DataTree& from_json_file(const std::string&);
-  std::string to_json() const;
+  template<typename RETURN_TYPE = std::string>
+  RETURN_TYPE to_json() const { return tree.to_json<RETURN_TYPE>(); }
 
   Comet::Object as_object() { return tree; }
 

@@ -34,11 +34,6 @@ DataTree& DataTree::from_json_file(const string&)
   return *this;
 }
 
-string DataTree::to_json() const
-{
-  return tree.to_json();
-}
-
 void Data::each(function<bool (Data)> functor)
 {
   for (auto _key : get_keys())
@@ -131,7 +126,7 @@ void Data::merge(Data data)
      if (data.is_array())
         object.set(key, data.as_object().apply("slice", 0));
       else
-        object.set(key, Comet::Object::from_json(data.as_object().to_json()));
+        object.set(key, Comet::Object::from_json(data.as_object().to_json<wstring>()));
     }
     else
     {
@@ -149,11 +144,6 @@ void Data::merge(DataTree datatree)
 void Data::output(ostream& out) const
 {
   out << to_json();
-}
-
-string Data::to_json() const
-{
-  return as_object().to_json();
 }
 
 string Data::to_xml() const

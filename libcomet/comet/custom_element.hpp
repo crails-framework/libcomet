@@ -36,7 +36,6 @@ namespace Comet
     Comet::Signal<std::string> signaler;
   protected:
     Comet::Signal<std::string>& get_signaler() { return signaler; }
-
   };
 
   class BindableEngineClient : public BindableEngineCommon
