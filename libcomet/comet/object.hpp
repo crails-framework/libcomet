@@ -56,6 +56,8 @@ namespace Comet
       ptr = array;
     }
 
+    client::Object* native_object() const { return ptr; }
+
     template<typename FUNCTYPE>
     Object(std::function<FUNCTYPE> func) { ptr = cheerp::Callback(func); }
 
@@ -273,6 +275,7 @@ namespace Comet
     ObjectImpl(CLIENT_TYPE* ptr) { this->ptr = ptr; }
     ObjectImpl(client::Object* ptr) { this->ptr = ptr; }
 
+    CLIENT_TYPE* native_object() const { return static_cast<CLIENT_TYPE*>(ptr); }
     CLIENT_TYPE* operator*() const { return static_cast<CLIENT_TYPE*>(ptr); }
     CLIENT_TYPE* operator->() const { return static_cast<CLIENT_TYPE*>(ptr); }
   };

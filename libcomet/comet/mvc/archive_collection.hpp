@@ -17,7 +17,7 @@ namespace Comet
     }
 
   protected:
-    virtual void parse(const std::string& str)
+    virtual void parse(Comet::String str)
     {
       IArchive         archive;
       std::list<MODEL> list;

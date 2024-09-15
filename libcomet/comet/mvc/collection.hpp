@@ -245,7 +245,7 @@ namespace Comet
         if (response->ok())
         {
           if (response->has_body())
-            parse(response->get_response_text());
+            parse(response->get_body());
           synced.trigger();
         }
       });
@@ -257,7 +257,7 @@ namespace Comet
     }
 
   protected:
-    virtual void parse(const std::string& str) = 0;
+    virtual void parse(Comet::String) = 0;
 
     Map models;
   };

@@ -26,6 +26,7 @@ namespace Comet
       bool   ok()         const { return status >= 200 && status < 300; }
       double get_status() const { return status; }
 
+      Comet::String get_body() const { return body; }
       Comet::Object get_response_object() const;
       DataTree      get_response_data() const;
       std::string   get_response_text() const { return std::string(*body); }

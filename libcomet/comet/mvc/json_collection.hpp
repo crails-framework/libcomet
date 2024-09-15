@@ -3,6 +3,7 @@
 
 # include "collection.hpp"
 # include "../datatree.hpp"
+# include "../globals.hpp"
 
 namespace Comet
 {
@@ -21,13 +22,16 @@ namespace Comet
     }
 
   protected:
-    virtual void parse(const std::string& str)
+    virtual void parse(Comet::String str) override
     {
-      DataTree   payload;
+      DataTree   payload(Comet::Object::from_json(*str));
       Data       models_json;
       const auto resource_name = get_resource_name();
 
-      payload.from_json(str);
+      Comet::window.set("bitepoil2", str);
+      Comet::window.set("bitepoil3", Comet::Object::from_json(*str));
+      Comet::window.set("bitepoil4", payload.as_object());
+
       if (resource_name.length() == 0)
         models_json = payload.as_data();
       else

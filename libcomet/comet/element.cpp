@@ -14,7 +14,7 @@ static std::string get_default_display_style_for_tag(std::string tag)
   transform(tag.begin(), tag.end(), tag.begin(), [](char c) -> char { return tolower(c); });
   if (display_style_by_tag.find(tag) != display_style_by_tag.end())
     return display_style_by_tag.at(tag);
-   return "inline-block";
+  return "inline-block";
 }
 
 static std::vector<std::string> string_split(const std::string& src, char delimiter)
