@@ -200,6 +200,37 @@ public:
 
   std::vector<std::string> get_keys() const;
 
+  class iterator
+  {
+    friend class Data;
+  public:
+    using iterator_type = std::input_iterator_tag;
+    using value_type = Data;
+
+    iterator(const iterator& copy) : object(copy.object), i(copy.i) {}
+    iterator(Comet::Object object_, std::size_t i_) : object(object_), i(i_) {}
+  
+    operator Data() const
+    {
+      Data root(object);
+      auto keys = root.get_keys();
+      return root[keys[i]];
+    }
+
+    Data operator*() { return Data(*this); }
+    iterator& operator++() { i++; return *this; }
+    bool operator==(const iterator& other) const { return other.i == i; }
+    bool operator!=(const iterator& other) const { return !operator==(other); }
+
+  private:
+    Comet::Object object;
+    std::size_t i = 0;
+  };
+
+  iterator begin() const { return iterator(as_object(), 0); }
+  iterator end() const { return iterator(as_object(), get_keys().size()); }
+  //iterator erase(iterator deleted);
+
   mutable Comet::Object object;
   std::string                   key;
 };
