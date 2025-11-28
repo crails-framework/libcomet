@@ -18,17 +18,16 @@ namespace Comet
     typedef void (CONTROLLER::*Method)();
     static void trigger(ROUTER& router, const Params& params, Method method)
     {
-      auto controller = new CONTROLLER(params);
+      auto controller = std::make_shared<CONTROLLER>(params);
       auto listener = new Listener();
 
       controller->initialize().then([controller, method]()
       {
-        (controller->*method)();
+        ((controller.get())->*method)();
         controller->finalize();
       });
       listener->listen_to(router.on_before_route_execution, [controller, listener](const std::string&)
       {
-        delete controller;
         delete listener;
       });
     }
