@@ -36,13 +36,13 @@ namespace Comet
     Element& text(client::String* content)      { (*this)->set_textContent(content); return *this; }
     Element& text(const std::string& content)   { _text<std::string>(content); return *this; }
     Element& text(const std::wstring& content)  { _text<std::wstring>(content); return *this; }
-    Element& value(client::String* val)         { static_cast<client::HTMLInputElement*>(**this)->set_value(val); return *this; }
+    Element& value(client::String* val)         { asInput()->set_value(val); return *this; }
     Element& value(const std::string& val)      { _value<std::string>(val); return *this; }
     Element& value(const std::wstring& val)     { _value<std::wstring>(val); return *this; }
     template<typename T>
     Element& value(const T val) { std::stringstream stream; stream << val; _value<std::string>(stream.str()); return *this; }
-    Element& checked(bool val)                  { static_cast<client::HTMLInputElement*>(**this)->set_checked(val); return *this; }
-    Element& selected(bool val)                 { static_cast<client::HTMLOptionElement*>(**this)->set_selected(val); return *this; }
+    Element& checked(bool val)                  { asInput()->set_checked(val); return *this; }
+    Element& selected(bool val)                 { asOption()->set_selected(val); return *this; }
 
     std::string html()    const { return Comet::Object((*this)->get_innerHTML()); }
     std::string tagName() const { return Comet::Object((*this)->get_tagName()); }
@@ -66,8 +66,7 @@ namespace Comet
     template<>
     std::wstring value<std::wstring>() const
     {
-      auto* input_el = static_cast<client::HTMLInputElement*>(**this);
-      auto* client_string = input_el->get_value();
+      auto* client_string = asInput()->get_value();
 
       return to_wstring(client_string);
     }
@@ -88,9 +87,9 @@ namespace Comet
     void append_to(client::HTMLElement* el);
     void append_to(Element& el);
     void insert_before(client::HTMLElement* el);
-    void insert_before(Element& el);
+    void insert_before(const Element& el) { insert_before(el.native_object()); }
     void insert_after(client::HTMLElement* el);
-    void insert_after(Element& el);
+    void insert_after(const Element& el) { insert_after(el.native_object()); }
     void destroy();
 
     bool    is_attached() const;
@@ -119,8 +118,18 @@ namespace Comet
     std::string          get_inner_html() const;
     std::string          get_text() const;
     std::string          get_value() const;
-    bool                 get_checked() const { return static_cast<client::HTMLInputElement*>(**this)->get_checked(); }
-    bool                 get_selected() const { return static_cast<client::HTMLOptionElement*>(**this)->get_selected(); }
+    bool                 get_checked() const { return asInput()->get_checked(); }
+    bool                 get_selected() const { return asOption()->get_selected(); }
+
+    ObjectImpl<client::HTMLInputElement> asInput() const
+    {
+      return cast<client::HTMLInputElement>();
+    }
+
+    ObjectImpl<client::HTMLOptionElement> asOption() const
+    {
+      return cast<client::HTMLOptionElement>();
+    }
 
   private:
     template<typename TYPE>
@@ -138,7 +147,7 @@ namespace Comet
     template<typename TYPE>
     void _value(const TYPE& val)
     {
-      static_cast<client::HTMLInputElement*>(**this)->set_value(val.c_str());
+      asInput()->set_value(val.c_str());
     }
   };
 

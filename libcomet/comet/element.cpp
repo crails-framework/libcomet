@@ -28,17 +28,17 @@ static std::vector<std::string> string_split(const std::string& src, char delimi
   return strings;
 }
 
-Element::Element() : ObjectImpl(client::document.createElement("div")), events(make_shared<JavascriptEvents>(static_cast<client::HTMLElement*>(ptr)))
+Element::Element() : ObjectImpl(client::document.createElement("div")), events(make_shared<JavascriptEvents>(Object(ptr).cast<client::HTMLElement>().native_object()))
 {
 }
 
 Element::Element(const client::String& type, const map<string, string>& children) :
-  ObjectImpl(client::document.createElement(type)), events(make_shared<JavascriptEvents>(static_cast<client::HTMLElement*>(ptr)))
+  ObjectImpl(client::document.createElement(type)), events(make_shared<JavascriptEvents>(Object(ptr).cast<client::HTMLElement>().native_object()))
 {
   attr(children);
 }
 
-Element::Element(client::HTMLElement* el) : ObjectImpl(el), events(make_shared<JavascriptEvents>(static_cast<client::HTMLElement*>(ptr)))
+Element::Element(client::HTMLElement* el) : ObjectImpl(el), events(make_shared<JavascriptEvents>(Object(ptr).cast<client::HTMLElement>().native_object()))
 {
 }
 
@@ -188,12 +188,12 @@ map<string, string> Element::css() const
 
 void Element::append_to(client::HTMLElement* el)
 {
-  el->appendChild(static_cast<client::HTMLElement*>(ptr));
+  el->appendChild(cast<client::HTMLElement>().native_object());
 }
 
 void Element::append_to(Element& el)
 {
-  el->appendChild(static_cast<client::HTMLElement*>(ptr));
+  el->appendChild(cast<client::HTMLElement>().native_object());
 }
 
 void Element::insert_before(client::HTMLElement* el)
@@ -207,11 +207,6 @@ void Element::insert_before(client::HTMLElement* el)
   }
 }
 
-void Element::insert_before(Element& el)
-{
-  insert_before(static_cast<client::HTMLElement*>(el.ptr));
-}
-
 void Element::insert_after(client::HTMLElement* el)
 {
   if (el)
@@ -220,18 +215,13 @@ void Element::insert_after(client::HTMLElement* el)
     auto* nextSibling = el->get_nextSibling();
 
     if (nextSibling)
-      insert_before(static_cast<client::HTMLElement*>(nextSibling));
+      insert_before(Object(nextSibling).cast<client::HTMLElement>().native_object());
     else if (wrapper.has_parent())
     {
       auto parent = wrapper.get_parent();
       append_to(parent);
     }
   }
-}
-
-void Element::insert_after(Element& el)
-{
-  insert_after(static_cast<client::HTMLElement*>(el.ptr));
 }
 
 bool Element::contains(const client::HTMLElement* source)
@@ -258,14 +248,29 @@ std::list<Element> Element::find(const std::string& selector)
     client::Node* node = node_list->item(i);
 
     if (node->get_nodeType() == 1)
-      results.push_back(Element(static_cast<client::HTMLElement*>(node)));
+    {
+#ifndef USE_OLD_CLIENTLIB
+      results.push_back(Element(node->cast<client::HTMLElement*>()));
+#else
+      results.push_back(Element(reinterpret_cast<client::HTMLElement*>(node)));
+#endif
+    }
   }
   return results;
 }
 
 Element Element::find_one(const std::string& selector)
 {
-  return Element(static_cast<client::HTMLElement*>((*this)->querySelector(selector.c_str())));
+  auto* result = (*this)->querySelector(selector.c_str());
+  if (result)
+  {
+#ifndef USE_OLD_CLIENTLIB
+    return Element(result->cast<client::HTMLElement*>());
+#else
+    return Element(static_cast<client::HTMLElement*>(result));
+#endif
+  }
+  return Element(nullptr);
 }
 
 void Element::each(std::function<bool (Element&)> func)
@@ -281,7 +286,11 @@ void Element::each(std::function<bool (Element&)> func)
   }
   for (client::Node* node : list)
   {
-    Element child(static_cast<client::HTMLElement*>(node));
+#ifndef USE_OLD_CLIENTLIB
+    Element child(node->cast<client::HTMLElement*>());
+#else
+    Element child(reinterpret_cast<client::HTMLElement*>(node));
+#endif
 
     if (func(child) == false)
       break ;
@@ -351,8 +360,7 @@ void Element::remove_attribute(const std::string& key)
 
 std::string Element::get_value() const
 {
-  auto* input_el      = static_cast<client::HTMLInputElement*>(**this);
-  auto* client_string = input_el->get_value();
+  auto* client_string = asInput()->get_value();
 
   return (std::string)(*client_string);
 }

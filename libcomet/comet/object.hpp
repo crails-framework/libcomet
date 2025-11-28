@@ -58,6 +58,16 @@ namespace Comet
 
     client::Object* native_object() const { return ptr; }
 
+    template<typename CLIENT_TYPE>
+    ObjectImpl<CLIENT_TYPE> cast() const
+    {
+#ifndef USE_OLD_CLIENTLIB
+      return ObjectImpl<CLIENT_TYPE>(ptr->cast<CLIENT_TYPE>());
+#else
+      return ObjectImpl<CLIENT_TYPE>(static_cast<CLIENT_TYPE*>(ptr));
+#endif
+    }
+
     template<typename FUNCTYPE>
     Object(std::function<FUNCTYPE> func) { ptr = cheerp::Callback(func); }
 
@@ -79,13 +89,21 @@ namespace Comet
     template<typename RETURN_TYPE = std::string>
     RETURN_TYPE to_json() const
     {
-      return (RETURN_TYPE)(*static_cast<client::String*>(client::JSON.stringify(ptr)));
+#ifndef USE_OLD_CLIENTLIB
+      return (RETURN_TYPE)(*(client::JSON.stringify(ptr)->cast<client::String*>()));
+#else
+      return (RETURN_TYPE)(*(static_cast<client::String*>(client::JSON.stringify(ptr))));
+#endif
     }
 
     template<>
     std::wstring to_json<std::wstring>() const
     {
+#ifndef USE_OLD_CLIENTLIB
+      return to_wstring(client::JSON.stringify(ptr)->cast<client::String*>());
+#else
       return to_wstring(static_cast<client::String*>(client::JSON.stringify(ptr)));
+#endif
     }
 
     Object operator[](const char* key)
@@ -106,14 +124,22 @@ namespace Comet
     {
       if (!is_of_type("String"))
         __asm__("throw 'Comet::Object cast to std::string, but type is not String'");
+#ifndef USE_OLD_CLIENTLIB
+      return (std::string)(*ptr->cast<client::String*>());
+#else
       return (std::string)(*static_cast<client::String*>(ptr));
+#endif
     }
 
     operator std::wstring() const
     {
       if (!is_of_type("String"))
         __asm__("throw 'Comet::Object cast to std::wstring, but type is not String'");
+#ifndef USE_OLD_CLIENTLIB
+      return to_wstring(ptr->cast<client::String*>());
+#else
       return to_wstring(static_cast<client::String*>(ptr));
+#endif
     }
 
     operator double()      const { return (double)(*ptr); }
@@ -130,8 +156,12 @@ namespace Comet
       std::vector<T> result;
 
       if (is_of_type("Array"))
-{
+      {
+#ifndef USE_OLD_CLIENTLIB
+        const client::Array& array = *(ptr->cast<client::Array*>());
+#else
         const client::Array& array = *(static_cast<client::Array*>(ptr));
+#endif
         result.resize(array.get_length());
         for (int i = 0 ; i < array.get_length() ; ++i)
           result[i] = (T)(Object(array[i]));
@@ -275,9 +305,16 @@ namespace Comet
     ObjectImpl(CLIENT_TYPE* ptr) { this->ptr = ptr; }
     ObjectImpl(client::Object* ptr) { this->ptr = ptr; }
 
-    CLIENT_TYPE* native_object() const { return static_cast<CLIENT_TYPE*>(ptr); }
-    CLIENT_TYPE* operator*() const { return static_cast<CLIENT_TYPE*>(ptr); }
-    CLIENT_TYPE* operator->() const { return static_cast<CLIENT_TYPE*>(ptr); }
+    CLIENT_TYPE* native_object() const
+    {
+#ifndef USE_OLD_CLIENTLIB
+      return ptr->cast<CLIENT_TYPE*>();
+#else
+      return reinterpret_cast<CLIENT_TYPE*>(ptr);
+#endif
+    }
+    CLIENT_TYPE* operator*() const { return native_object(); }
+    CLIENT_TYPE* operator->() const { return native_object(); }
   };
 
   class String : public ObjectImpl<client::String>

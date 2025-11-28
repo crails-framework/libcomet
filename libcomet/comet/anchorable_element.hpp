@@ -17,7 +17,7 @@ namespace Comet
   struct AnchorableElement
   {
     Comet::Element anchor;
-    AnchorMode             anchor_mode = AnchorsEnd;
+    AnchorMode     anchor_mode = AnchorsEnd;
 
     inline void set_anchor(Comet::Element el, AnchorMode mode)
     {
@@ -46,7 +46,7 @@ namespace Comet
         prepend_to_anchor(elements);
         break ;
       case AnchorsEnd:
-        throw std::logic_error("AnchorableElement::attach_element called with unset anchor");
+        throw std::logic_error("AnchorableElement::attach_elements called with unset anchor");
         break ;
       }
     }

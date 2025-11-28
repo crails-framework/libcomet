@@ -25,7 +25,11 @@ void LocalStorage::initialize()
 {
   event_listener = cheerp::Callback([this](client::Event* _event)
   {
+#ifndef USE_OLD_CLIENTLIB
+    auto* event = _event->cast<client::StorageEvent*>();
+#else
     auto* event = static_cast<client::StorageEvent*>(_event);
+#endif
 
     if (event->get_storageArea() == storage)
       on_change.trigger(Change(event));
@@ -36,10 +40,17 @@ void LocalStorage::initialize()
 LocalStorage::Change::Change(client::StorageEvent* event)
 {
   key = (string)(*event->get_key());
+#ifndef USE_OLD_CLIENTLIB
+  if (event->get_oldValue())
+    old_value = (string)(*(event->get_oldValue()->cast<client::String*>()));
+  if (event->get_newValue())
+    new_value = (string)(*(event->get_newValue()->cast<client::String*>()));
+#else
   if (event->get_oldValue())
     old_value = (string)(*static_cast<client::String*>(event->get_oldValue()));
   if (event->get_newValue())
     new_value = (string)(*static_cast<client::String*>(event->get_newValue()));
+#endif
 }
 
 template<>
@@ -59,8 +70,13 @@ string LocalStorage::get_item<string>(const string& key) const
 {
   client::Object* object = storage->getItem(key.c_str());
 
+#ifndef USE_OLD_CLIENTLIB
+  if (object)
+    return (string)(*(object->cast<client::String*>()));
+#else
   if (object)
     return (string)(*static_cast<client::String*>(object));
+#endif
   return "";
 }
 

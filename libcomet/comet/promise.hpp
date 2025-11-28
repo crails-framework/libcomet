@@ -6,7 +6,11 @@
 
 namespace Comet
 {
+#ifndef USE_OLD_CLIENTLIB
+  class Promise : public ObjectImpl<client::Promise<client::Object*>>
+#else
   class Promise : public ObjectImpl<client::Promise>
+#endif
   {
   public:
     static Promise solved_promise();

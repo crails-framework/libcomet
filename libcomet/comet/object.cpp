@@ -28,7 +28,7 @@ bool Object::is_undefined() const
   {
     prepare_is_undefined();
     Object      answer = window.apply("isUndefined", *this);
-    std::string result = (std::string)(*static_cast<client::String*>(answer.ptr));
+    std::string result = (std::string)(*(answer.cast<client::String>().native_object()));
     return result == "y";
   }
   return true;
@@ -46,7 +46,11 @@ vector<wstring> Object::to_vector() const
 
   if (is_of_type("Array"))
   {
+#ifndef USE_OLD_CLIENTLIB
+    const client::Array& array = *(ptr->cast<client::Array*>());
+#else
     const client::Array& array = *(static_cast<client::Array*>(ptr));
+#endif
     result.resize(array.get_length());
     for (int i = 0 ; i < array.get_length() ; ++i)
       result.push_back((wstring)(Object(array[i])));
