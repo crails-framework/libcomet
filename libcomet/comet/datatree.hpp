@@ -5,6 +5,7 @@
 # include <vector>
 # include <map>
 # include <string>
+# include <string_view>
 # include <iostream>
 # include <sstream>
 # include "object.hpp"
@@ -30,22 +31,18 @@ public:
   }
 
   template<typename T>
-  T operator[](const std::string& key) const
-  {
-    std::string as_string = as_object()[key.c_str()];
-    std::stringstream stream;
-    T output;
-
-    stream << as_string;
-    stream >> output;
-    return output;
-  }
-
-  Data operator[](const std::string& k) const
+  T operator[](const std::string_view key) const
   {
     if (is_null())
       object.set(key, Comet::Object());
-    return Data(as_object(), k.c_str());
+    return Data(as_object(), std::string(key.data(), key.length())).as<T>();
+  }
+
+  Data operator[](const std::string_view key) const
+  {
+    if (is_null())
+      object.set(key, Comet::Object());
+    return Data(as_object(), std::string(key.data(), key.length()));
   }
 
   template<typename T>

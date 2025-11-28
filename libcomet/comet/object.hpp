@@ -172,9 +172,20 @@ namespace Comet
     bool is_of_type(const std::string& type) const { return is_of_type(type.c_str()); }
     bool is_of_type(const char* type) const;
 
+    void set(const std::string_view str, Object object)
+    {
+      set(std::string(str.data(), str.length()), object);
+    }
+
     void set(const std::string& str, Object object)
     {
       ptr->set_(str.c_str(), object.ptr);
+    }
+
+    void set(const std::map<std::string_view, Object>& items)
+    {
+      for (auto item : items)
+        set(item.first, item.second);
     }
 
     void set(const std::map<std::string, Object>& items)
