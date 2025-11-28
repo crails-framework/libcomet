@@ -179,7 +179,12 @@ namespace Comet
 
     void set(const std::string& str, Object object)
     {
-      ptr->set_(str.c_str(), object.ptr);
+      ptr->set_(str.c_str(), object.native_object());
+    }
+
+    void set(const char* str, Object object)
+    {
+      ptr->set_(str, object.native_object());
     }
 
     void set(const std::map<std::string_view, Object>& items)
@@ -194,9 +199,19 @@ namespace Comet
         set(item.first, item.second);
     }
 
+    void unset(const std::string_view str)
+    {
+      unset(std::string(str.data(), str.length()));
+    }
+
     void unset(const std::string& str)
     {
       ptr->set_(str.c_str(), nullptr);
+    }
+
+    void unset(const char* str)
+    {
+      ptr->set_(str, nullptr);
     }
 
     template<typename ...ARGS>
