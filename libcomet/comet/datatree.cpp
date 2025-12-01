@@ -89,7 +89,9 @@ bool Data::is_null() const
 
 vector<string> Data::get_keys() const
 {
-  return Comet::window["Object"].apply("keys", as_object());
+  return exists()
+    ? Comet::window["Object"].apply("keys", as_object())
+    : vector<string>();
 }
 
 vector<string> Data::find_missing_keys(const vector<string>& keys) const
