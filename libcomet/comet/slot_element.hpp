@@ -31,6 +31,12 @@ namespace Comet
       attach_elements(element_list);
     }
 
+    void detach()
+    {
+      if (has_element())
+        get_element()->destroy();
+    }
+
     void set_element(IBindableView& el)
     {
       cleanup();
@@ -53,11 +59,9 @@ namespace Comet
         cleanup();
     }
 
-  private:
     void cleanup()
     {
-      if (has_element())
-        get_element()->destroy();
+      detach();
       element = nullptr;
       element_ptr = nullptr;
     }
