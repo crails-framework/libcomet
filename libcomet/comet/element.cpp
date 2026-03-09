@@ -381,7 +381,7 @@ std::string Element::get_inner_html() const
 
 void Element::dispatch_event(const std::string& name, Object object) const
 {
-  ObjectImpl<client::CustomEvent> event(new client::CustomEvent(name.c_str()));
+  ObjectImpl<client::CustomEvent<void>> event(new client::CustomEvent<void>(name.c_str()));
 
   event["eventData"] = object;
   dispatch_event(event.native_object());

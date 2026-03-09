@@ -122,7 +122,7 @@ namespace Comet
     bool                 get_selected() const { return asOption()->get_selected(); }
 
     void                 dispatch_event(const std::string&, Object = Object(false)) const;
-    void                 dispatch_event(client::Event* event) const { return cast<client::HTMLElement>()->dispatchEvent(event); }
+    void                 dispatch_event(client::Event* event) const { cast<client::HTMLElement>()->dispatchEvent(event); }
 
     ObjectImpl<client::HTMLInputElement> asInput() const
     {
