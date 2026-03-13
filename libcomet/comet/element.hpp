@@ -36,9 +36,9 @@ namespace Comet
     Element& text(client::String* content)      { (*this)->set_textContent(content); return *this; }
     Element& text(const std::string& content)   { _text<std::string>(content); return *this; }
     Element& text(const std::wstring& content)  { _text<std::wstring>(content); return *this; }
-    Element& value(client::String* val)         { asInput()->set_value(val); return *this; }
-    Element& value(const std::string& val)      { _value<std::string>(val); return *this; }
-    Element& value(const std::wstring& val)     { _value<std::wstring>(val); return *this; }
+    Element& value(client::String* val)         { set_value(val); return *this; }
+    Element& value(const std::string& val)      { set_value(val); return *this; }
+    Element& value(const std::wstring& val)     { set_value(val); return *this; }
     template<typename T>
     Element& value(const T val) { std::stringstream stream; stream << val; _value<std::string>(stream.str()); return *this; }
     Element& checked(bool val)                  { asInput()->set_checked(val); return *this; }
@@ -70,6 +70,10 @@ namespace Comet
 
       return to_wstring(client_string);
     }
+
+    void set_value(client::String* val) { asInput()->set_value(val); }
+    void set_value(const std::string& val) { _value<std::string>(val); }
+    void set_value(const std::wstring& val) { _value<std::wstring>(val); }
 
     inline Element& inner(const std::vector<Element>& els)                  { return operator>(els); }
     inline Element& inner(const std::vector<Element*>& els)                 { return operator>(els); }
