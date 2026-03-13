@@ -109,7 +109,14 @@ namespace Comet
 
     bool                 has_attribute(const std::string& key) const;
     std::string          get_attribute(const std::string& key) const;
+    void                 set_attribute(const std::string& key, const std::string& value) { attr(key, value); }
     void                 remove_attribute(const std::string& key);
+
+    void                 toggle_boolean_attribute(const std::string& attribute, bool);
+    bool                 is_disabled() const { return has_attribute("disabled"); }
+    bool                 is_editable() const { return has_attribute("contenteditable"); }
+    void                 set_disabled(bool val) { toggle_boolean_attribute("disabled", val); }
+    void                 set_editable(bool val) { toggle_boolean_attribute("contenteditable", val); }
 
     bool                 is_visible() const;
     Element&             visible(bool);

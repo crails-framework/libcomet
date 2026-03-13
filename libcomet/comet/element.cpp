@@ -370,6 +370,14 @@ void Element::remove_attribute(const std::string& key)
   (*this)->removeAttribute(key.c_str());
 }
 
+void Element::toggle_boolean_attribute(const std::string& attribute, bool val)
+{
+  if (val)
+    set_attribute(attribute, "");
+  else
+    remove_attribute(attribute);
+}
+
 std::string Element::get_value() const
 {
   auto* client_string = asInput()->get_value();
