@@ -112,7 +112,7 @@ namespace Comet
     void                 remove_attribute(const std::string& key);
 
     bool                 is_visible() const;
-    Element&             visible(bool, const std::string& display = "");
+    Element&             visible(bool);
     void                 set_visible(bool val) { visible(val); }
 
     std::string          get_inner_html() const;

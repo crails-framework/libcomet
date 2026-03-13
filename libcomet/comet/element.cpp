@@ -6,7 +6,15 @@ using namespace std;
 using namespace Comet;
 
 static std::map<std::string, std::string> display_style_by_tag = {
-  {"div", "block"}, {"tr", "table-row"}, {"td", "table-cell"}, {"th", "table-cell"}, {"table", "table"}
+  {"div", "block"}, {"p", "block"}, {"section", "block"}, {"article", "block"},
+  {"header", "block"}, {"footer", "block"}, {"main", "block"},
+  {"nav", "block"}, {"aside", "block"}, {"ul", "block"}, {"ol", "block"},
+  {"li", "block"}, {"form", "block"}, {"fieldset", "block"},
+  {"blockquote", "block"}, {"pre", "block"}, {"h1", "block"}, {"h2", "block"},
+  {"h3", "block"}, {"h4", "block"}, {"h5", "block"}, {"h6", "block"},
+  {"hr", "block"}, {"textarea", "inline"}, {"input", "inline"},
+  {"tr", "table-row"}, {"td", "table-cell"}, {"th", "table-cell"},
+  {"table", "table"}, {"img", "inline"}
 };
 
 static std::string get_default_display_style_for_tag(std::string tag)
@@ -58,17 +66,21 @@ bool Element::is_visible() const
          (!css_visible || (string)(*css_visible) != "hidden");
 }
 
-Element& Element::visible(bool value, const string& _display)
+Element& Element::visible(bool value)
 {
-  auto*  style = (*this)->get_style();
-  string display;
+  auto*       style = (*this)->get_style();
+  std::string display = "";
 
   if (value)
   {
-    if (!_display.length())
+    style->set_display(display.c_str());
+    client::CSSStyleDeclaration* computed = client::window.getComputedStyle(native_object());
+    std::string css_display(*(computed->get_display()));
+
+    if (css_display == "none")
       display = get_default_display_style_for_tag(tagName());
     else
-      display = _display;
+      return *this;
   }
   else
     display = "none";
