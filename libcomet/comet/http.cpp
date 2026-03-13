@@ -45,7 +45,7 @@ Request::Request(const string& m, const string& p) : method(m), path(p)
 
 void Request::set_headers(const map<string, string> headers)
 {
-  for (const auto header : headers)
+  for (const auto& header : headers)
     xhr->setRequestHeader(header.first.c_str(), header.second.c_str());
 }
 
