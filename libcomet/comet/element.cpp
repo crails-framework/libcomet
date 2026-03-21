@@ -403,6 +403,6 @@ void Element::dispatch_event(const std::string& name, Object object) const
 {
   ObjectImpl<client::CustomEvent<void>> event(new client::CustomEvent<void>(name.c_str()));
 
-  event["eventData"] = object;
+  event.set("eventData", object.native_object());
   dispatch_event(event.native_object());
 }
