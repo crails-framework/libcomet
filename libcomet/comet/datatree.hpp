@@ -34,14 +34,14 @@ public:
   T operator[](const std::string_view key) const
   {
     if (is_null())
-      object.set(key, Comet::Object());
+      object.set(get_key(), Comet::Object());
     return Data(as_object(), std::string(key.data(), key.length())).as<T>();
   }
 
   Data operator[](const std::string_view key) const
   {
     if (is_null())
-      object.set(key, Comet::Object());
+      object.set(get_key(), Comet::Object());
     return Data(as_object(), std::string(key.data(), key.length()));
   }
 
