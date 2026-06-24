@@ -101,10 +101,10 @@ namespace Comet
     Element get_parent() const;
     Element get_next() const;
 
-    std::list<Element>   find(const std::string& selector);
-    Element              find_one(const std::string& selector);
-    bool                 contains(const client::HTMLElement*);
-    void                 each(std::function<bool (Element&)>);
+    std::list<Element>   find(const std::string& selector) const;
+    Element              find_one(const std::string& selector) const;
+    bool                 contains(const client::HTMLElement*) const;
+    void                 each(std::function<bool (Element&)>) const;
 
     void                 toggle_class(const std::string& str, bool set);
     void                 add_class(const std::string& str);

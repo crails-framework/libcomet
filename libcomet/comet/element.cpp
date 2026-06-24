@@ -236,7 +236,7 @@ void Element::insert_after(client::HTMLElement* el)
   }
 }
 
-bool Element::contains(const client::HTMLElement* source)
+bool Element::contains(const client::HTMLElement* source) const
 {
   bool result = false;
 
@@ -250,7 +250,7 @@ bool Element::contains(const client::HTMLElement* source)
   return result;
 }
 
-std::list<Element> Element::find(const std::string& selector)
+std::list<Element> Element::find(const std::string& selector) const
 {
   client::NodeList* node_list = (*this)->querySelectorAll(selector.c_str());
   std::list<Element> results;
@@ -271,7 +271,7 @@ std::list<Element> Element::find(const std::string& selector)
   return results;
 }
 
-Element Element::find_one(const std::string& selector)
+Element Element::find_one(const std::string& selector) const
 {
   auto* result = (*this)->querySelector(selector.c_str());
   if (result)
@@ -285,7 +285,7 @@ Element Element::find_one(const std::string& selector)
   return Element(nullptr);
 }
 
-void Element::each(std::function<bool (Element&)> func)
+void Element::each(std::function<bool (Element&)> func) const
 {
   auto* source = (*this)->get_childNodes();
   vector<client::Node*> list;
