@@ -2,6 +2,7 @@
 # define CRAILS_FRONT_REPEATER_HPP
 
 # include "anchorable_element.hpp"
+# include <optional>
 
 namespace Comet
 {
@@ -43,6 +44,23 @@ namespace Comet
       for (auto element : elements)
         element.second->destroy();
       elements.clear();
+    }
+
+    std::optional<ELEMENT> atIndex(std::size_t index) const
+    {
+      return elements.size() < index
+        ? std::optional<ELEMENT>(elements[index].second)
+        : std::optional<ELEMENT>();
+    }
+
+    std::optional<ELEMENT> at(Iterator lookup) const
+    {
+      for (auto element : elements)
+      {
+        if (element.first == lookup)
+          return element.second;
+      }
+      return {};
     }
 
   private:
