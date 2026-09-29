@@ -116,7 +116,7 @@ bool Data::require(const vector<string>& keys) const
 
 bool Data::is_array() const
 {
-  return *(as_object()["constructor"]) == *(Comet::window["Array"]);
+  return !is_null() && *(as_object()["constructor"]) == *(Comet::window["Array"]);
 }
 
 void Data::merge(Data data)

@@ -31,7 +31,7 @@ namespace Comet
       else
       {
         controller = std::make_shared<CONTROLLER>(params);
-        router.set_current_controller<CONTROLLER>(controller);
+        router.template set_current_controller<CONTROLLER>(controller);
       }
       controller->initialize().then([controller, method]()
       {

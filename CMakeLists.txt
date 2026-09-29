@@ -41,6 +41,8 @@ file(GLOB_RECURSE comet_headers libcomet/*.hpp)
 
 add_library(comet STATIC ${comet_src})
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frtti")
+
 target_link_libraries(comet PRIVATE crails-semantics)
 target_compile_definitions(comet PUBLIC USE_OLD_CLIENTLIB) # Cheerp >3.0 provides a new clientlib
 
