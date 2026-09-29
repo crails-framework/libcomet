@@ -12,7 +12,7 @@ namespace Comet
   class Controller : public std::enable_shared_from_this<Controller>
   {
   protected:
-    const Params& params;
+    Params params;
 
   public:
     Controller(const Params& p) : params(p)
@@ -22,6 +22,8 @@ namespace Comet
     virtual ~Controller()
     {
     }
+
+    void update_params(const Params& p) { params = p; }
 
     virtual std::string get_application_name()
     {

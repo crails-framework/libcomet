@@ -5,6 +5,8 @@
 # include "signal.hpp"
 # include <cheerp/client.h>
 # include <map>
+# include <memory>
+# include <typeindex>
 
 namespace Comet
 {
@@ -16,19 +18,25 @@ namespace Comet
   {
   public:
     typedef void (CONTROLLER::*Method)();
+
     static void trigger(ROUTER& router, const Params& params, Method method)
     {
-      auto controller = std::make_shared<CONTROLLER>(params);
-      auto listener = new Listener();
+      std::shared_ptr<CONTROLLER> controller;
 
+      if (router.template is_current_controller<CONTROLLER>())
+      {
+        controller = router.template get_current_controller<CONTROLLER>();
+        controller->update_params(params);
+      }
+      else
+      {
+        controller = std::make_shared<CONTROLLER>(params);
+        router.set_current_controller<CONTROLLER>(controller);
+      }
       controller->initialize().then([controller, method]()
       {
         ((controller.get())->*method)();
         controller->finalize();
-      });
-      listener->listen_to(router.on_before_route_execution, [controller, listener](const std::string&)
-      {
-        delete listener;
       });
     }
   };
@@ -61,10 +69,37 @@ namespace Comet
       { ActionRoute<CONTROLLER, Router>::trigger(*this, params, method); });
     }
 
+    template<typename CONTROLLER>
+    bool is_current_controller() const
+    {
+      return current_controller_type == std::type_index(typeid(CONTROLLER)) && current_controller != nullptr;
+    }
+
+    template<typename CONTROLLER>
+    std::shared_ptr<CONTROLLER> get_current_controller() const
+    {
+      return std::static_pointer_cast<CONTROLLER>(current_controller);
+    }
+
+    template<typename CONTROLLER>
+    void set_current_controller(std::shared_ptr<CONTROLLER> controller)
+    {
+      current_controller_type = std::type_index(typeid(CONTROLLER));
+      current_controller = std::static_pointer_cast<void>(controller);
+    }
+
+    void reset_current_controller()
+    {
+      current_controller.reset();
+      current_controller_type = std::type_index(typeid(void));
+    }
+
   private:
     void on_hash_changed();
 
     std::string last_hash;
+    std::shared_ptr<void> current_controller;
+    std::type_index current_controller_type{typeid(void)};
   };
 }
 
